@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       name: product.name,
       price: product.price,
       quantity: qty,
+      image: product.image,
     });
     return NextResponse.json(newCartItem);
   } catch (error) {
@@ -49,11 +50,11 @@ export async function GET() {
   try {
     await dbConnect();
     const items = await cartItem.find();
-    const total = items.reduce(
+    const totalSum = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
     );
-    return NextResponse.json({ items, total });
+    return NextResponse.json({ items, total: totalSum });
   } catch (error) {
     console.error("Cart GET error:", error);
     return NextResponse.json(

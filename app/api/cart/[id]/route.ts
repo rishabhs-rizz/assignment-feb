@@ -16,7 +16,16 @@ export async function DELETE(
         { status: 404 },
       );
     }
-    return NextResponse.json({ message: "Cart item deleted" });
+    const items = await cartItem.find();
+    const totalSum = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+    return NextResponse.json({
+      message: "Cart item deleted",
+      items,
+      total: totalSum,
+    });
   } catch (error) {
     console.error("Cart DELETE error:", error);
     return NextResponse.json(
