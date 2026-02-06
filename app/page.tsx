@@ -1,65 +1,85 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import { CgShoppingCart } from "react-icons/cg";
 
 export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }, []);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen">
+      {/* Navbar */}
+      <div className="border-[#CAC8B8] border-2 h-15 flex justify-between items-center px-10 text-black">
+        <h1 className="font-bold text-3xl bg-linear-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent tracking-tight">
+          CartoMart
+        </h1>
+
+        <button
+          className="relative hover:scale-110 transition-transform duration-200 cursor-pointer"
+          onClick={() => setCartCount(cartCount + 1)}
+        >
+          <CgShoppingCart className="text-3xl text-slate-700 hover:text-amber-600 transition-colors duration-200" />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg animate-pulse">
+              {cartCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="text-center mb-12 space-y-3">
+          <h2 className="text-5xl font-black text-slate-800 tracking-tight">
+            Featured Collection
+          </h2>
+          <p className="text-lg text-orange-500 max-w-2xl mx-auto">
+            Discover our carefully curated selection of premium products
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Products Grid */}
+        <div className="p-10 grid grid-cols-4 gap-6">
+          {products.map((product: any) => (
+            <div
+              key={product.id}
+              className="border border-gray-300 rounded-lg p-4 bg-gray-100 hover:shadow-lg transition-shadow duration-300"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className=" rounded-lg object-cover h-44 w-full"
+              />
+              <h2 className="font-bold text-lg mt-2 truncate">
+                {product.name}
+              </h2>
+              <p className="text-gray-600">${product.price}</p>
+              <button className="w-full bg-linear-to-r from-amber-500 to-orange-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-gray-500/30 hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer mt-4">
+                Add to Cart
+              </button>
+            </div>
+          ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
+
+//  {products.map((product: any) => (
+//           <div
+//             key={product.id}
+//             className="border border-gray-300 rounded-lg p-4"
+//           >
+//             <img
+//               src={product.image}
+//               alt={product.name}
+//               className="w-full h-48 object-cover rounded-lg"
+//             />
+//             <h2 className="font-bold text-lg mt-2">{product.name}</h2>
+//             <p className="text-gray-600">${product.price}</p>
+//           </div>
+//         ))}

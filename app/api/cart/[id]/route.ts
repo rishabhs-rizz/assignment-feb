@@ -8,7 +8,7 @@ export async function DELETE(
 ) {
   try {
     await dbConnect();
-    const { id } = params;
+    const { id } = await params;
     const deletedItem = await cartItem.findByIdAndDelete(id);
     if (!deletedItem) {
       return NextResponse.json(
