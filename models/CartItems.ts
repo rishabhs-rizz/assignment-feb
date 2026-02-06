@@ -19,6 +19,7 @@ const CartItemSchema = new Schema({
     required: true,
     default: 1,
   },
+  image: String,
 });
 
 const cartItem = models.cartItem || model("cartItem", CartItemSchema);

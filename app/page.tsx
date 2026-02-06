@@ -1,10 +1,54 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CgShoppingCart } from "react-icons/cg";
 
+type Product = {
+  _id: string;
+  name: string;
+  price: number;
+  image?: string;
+};
+
 export default function Home() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [cartCount, setCartCount] = useState(0);
+
+  async function AddtoCart({
+    productId,
+    qty,
+  }: {
+    productId: string;
+    qty: number;
+  }) {
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, qty }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Added to cart:", data);
+        setCartCount((prev) => prev + qty);
+      } else {
+        console.error("Failed to add to cart");
+      }
+    } catch (error) {
+      console.error("Add to cart error:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetch("/api/cart")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Cart data:", data);
+        setCartCount(data.items.length);
+      });
+  }, []);
 
   useEffect(() => {
     fetch("/api/products")
@@ -19,9 +63,9 @@ export default function Home() {
           CartoMart
         </h1>
 
-        <button
+        <Link
+          href="/cart"
           className="relative hover:scale-110 transition-transform duration-200 cursor-pointer"
-          onClick={() => setCartCount(cartCount + 1)}
         >
           <CgShoppingCart className="text-3xl text-slate-700 hover:text-amber-600 transition-colors duration-200" />
           {cartCount > 0 && (
@@ -29,7 +73,7 @@ export default function Home() {
               {cartCount}
             </span>
           )}
-        </button>
+        </Link>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -42,11 +86,11 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Products Grid */}
+        {/* heere's Products Grid */}
         <div className="p-10 grid grid-cols-4 gap-6">
-          {products.map((product: any) => (
+          {products.map((product) => (
             <div
-              key={product.id}
+              key={product._id}
               className="border border-gray-300 rounded-lg p-4 bg-gray-100 hover:shadow-lg transition-shadow duration-300"
             >
               <img
@@ -58,7 +102,10 @@ export default function Home() {
                 {product.name}
               </h2>
               <p className="text-gray-600">${product.price}</p>
-              <button className="w-full bg-linear-to-r from-amber-500 to-orange-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-gray-500/30 hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer mt-4">
+              <button
+                onClick={() => AddtoCart({ productId: product._id, qty: 1 })}
+                className="w-full bg-linear-to-r from-amber-500 to-orange-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-gray-500/30 hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer mt-4"
+              >
                 Add to Cart
               </button>
             </div>
@@ -68,18 +115,3 @@ export default function Home() {
     </div>
   );
 }
-
-//  {products.map((product: any) => (
-//           <div
-//             key={product.id}
-//             className="border border-gray-300 rounded-lg p-4"
-//           >
-//             <img
-//               src={product.image}
-//               alt={product.name}
-//               className="w-full h-48 object-cover rounded-lg"
-//             />
-//             <h2 className="font-bold text-lg mt-2">{product.name}</h2>
-//             <p className="text-gray-600">${product.price}</p>
-//           </div>
-//         ))}
