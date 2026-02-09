@@ -16,9 +16,11 @@ export async function POST(request: Request) {
       0,
     );
 
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
     const receipt = {
       total,
-      TotalItems: items.length,
+      TotalItems: totalItems,
       timeStamp: new Date().toISOString(),
     };
     return NextResponse.json(receipt);
