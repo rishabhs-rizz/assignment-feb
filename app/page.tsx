@@ -1,4 +1,5 @@
 "use client";
+import { getUserId } from "@/lib/getUserId";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CgShoppingCart } from "react-icons/cg";
@@ -13,6 +14,12 @@ type Product = {
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cartCount, setCartCount] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = getUserId();
+    setUserId(id);
+  }, []);
 
   async function LoadProducts() {
     await fetch("/api/products")
@@ -25,7 +32,7 @@ export default function Home() {
   }, []);
 
   async function LoadCartCount() {
-    await fetch("/api/cart")
+    await fetch(`/api/cart?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Cart data:", data);
@@ -34,6 +41,7 @@ export default function Home() {
   }
 
   useEffect(() => {
+    if (!userId) return;
     LoadCartCount();
   }, []);
 
@@ -50,13 +58,13 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId, qty }),
+        body: JSON.stringify({ productId, qty, userId }),
       });
       if (res.ok) {
         const data = await res.json();
         console.log("Added to cart:", data);
         LoadCartCount();
-        setCartCount(data.items.length);
+        // setCartCount(data.items.length);
       } else {
         console.error("Failed to add to cart");
       }

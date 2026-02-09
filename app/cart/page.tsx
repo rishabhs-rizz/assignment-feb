@@ -1,4 +1,5 @@
 "use client";
+import { getUserId } from "@/lib/getUserId";
 import { set } from "mongoose";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -27,21 +28,30 @@ export default function Cart() {
     TotalItems: number;
     timeStamp: string;
   } | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = getUserId();
+    setUserId(id);
+  }, []);
 
   async function LoadItems() {
-    await fetch("/api/cart")
+    await fetch(`/api/cart?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => setCartItems(data));
     setIsLoading(false);
   }
 
   useEffect(() => {
+    if (!userId) return;
     LoadItems();
   }, []);
 
   async function removeFromCart(itemId: string) {
     try {
-      const res = await fetch(`/api/cart/${itemId}`, { method: "DELETE" });
+      const res = await fetch(`/api/cart/${itemId}?userId=${userId}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
         const data = await res.json();
         console.log(data);
@@ -57,7 +67,13 @@ export default function Cart() {
 
   async function handleCheckout() {
     try {
-      const res = await fetch("/api/checkout", { method: "POST" });
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
       if (res.ok) {
         const data = await res.json();
         console.log("Checkout successful:", data);
