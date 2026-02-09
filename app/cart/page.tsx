@@ -1,6 +1,5 @@
 "use client";
 import { getUserId } from "@/lib/getUserId";
-import { set } from "mongoose";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BiArrowBack, BiMinus, BiPlus, BiX } from "react-icons/bi";
@@ -45,7 +44,7 @@ export default function Cart() {
   useEffect(() => {
     if (!userId) return;
     LoadItems();
-  }, []);
+  }, [userId]);
 
   async function removeFromCart(itemId: string) {
     try {
@@ -98,7 +97,7 @@ export default function Cart() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId: itemId, qty: newQty }),
+        body: JSON.stringify({ productId: itemId, qty: newQty, userId }),
       });
       console.log("Update quantity response:", res);
       if (res.ok) {

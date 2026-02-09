@@ -43,7 +43,7 @@ export default function Home() {
   useEffect(() => {
     if (!userId) return;
     LoadCartCount();
-  }, []);
+  }, [userId]);
 
   async function AddtoCart({
     productId,

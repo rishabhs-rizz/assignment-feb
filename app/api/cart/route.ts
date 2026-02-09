@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const product = await Product.findById({ productId });
+    const product = await Product.findById(productId);
 
     if (!product) {
       return new Response("Product not found", { status: 404 });
