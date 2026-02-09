@@ -2,7 +2,7 @@
 import { set } from "mongoose";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BiArrowBack, BiX } from "react-icons/bi";
+import { BiArrowBack, BiMinus, BiPlus, BiX } from "react-icons/bi";
 
 type CartItem = {
   _id: string;
@@ -10,6 +10,7 @@ type CartItem = {
   price: number;
   quantity: number;
   image?: string;
+  productId: string;
 };
 
 export default function Cart() {
@@ -40,7 +41,7 @@ export default function Cart() {
 
   async function removeFromCart(itemId: string) {
     try {
-      const res = await fetch(`api/cart/${itemId}`, { method: "DELETE" });
+      const res = await fetch(`/api/cart/${itemId}`, { method: "DELETE" });
       if (res.ok) {
         const data = await res.json();
         console.log(data);
@@ -72,6 +73,30 @@ export default function Cart() {
       console.error("Checkout error:", error);
     }
   }
+
+  async function updateQuantity(itemId: string, newQty: number) {
+    if (newQty < 1) return;
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId: itemId, qty: newQty }),
+      });
+      console.log("Update quantity response:", res);
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Quantity updated:", data);
+        LoadItems();
+      } else {
+        console.error("Failed to update quantity");
+      }
+    } catch (error) {
+      console.error("Update quantity error:", error);
+    }
+  }
+
   return (
     <>
       {isLoading ? (
@@ -186,8 +211,21 @@ export default function Cart() {
                   className=" rounded-lg object-cover h-44 w-full"
                 />
                 <h2 className="font-bold text-lg mt-2 truncate">{item.name}</h2>
-                <p className="text-sm text-gray-600">
-                  ${item.price} x {item.quantity}
+                <p className="text-sm text-gray-600">Price: ${item.price}</p>
+                <p className="text-sm text-gray-600 flex items-center gap-1">
+                  Quantity: {item.quantity}
+                  <BiPlus
+                    className="cursor-pointer hover:text-amber-500"
+                    onClick={() =>
+                      updateQuantity(item.productId, item.quantity + 1)
+                    }
+                  />
+                  <BiMinus
+                    className="cursor-pointer hover:text-amber-500"
+                    onClick={() =>
+                      updateQuantity(item.productId, item.quantity - 1)
+                    }
+                  />
                 </p>
                 <button
                   onClick={() => removeFromCart(item._id)}

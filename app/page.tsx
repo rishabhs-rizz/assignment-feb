@@ -14,6 +14,29 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cartCount, setCartCount] = useState(0);
 
+  async function LoadCartCount() {
+    await fetch("/api/cart")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Cart data:", data);
+        setCartCount(data.items.length);
+      });
+  }
+
+  async function LoadProducts() {
+    await fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }
+
+  useEffect(() => {
+    LoadCartCount();
+  }, []);
+
+  useEffect(() => {
+    LoadProducts();
+  }, []);
+
   async function AddtoCart({
     productId,
     qty,
@@ -32,7 +55,8 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         console.log("Added to cart:", data);
-        setCartCount((prev) => prev + qty);
+        LoadCartCount();
+        setCartCount(data.items.length);
       } else {
         console.error("Failed to add to cart");
       }
@@ -40,21 +64,6 @@ export default function Home() {
       console.error("Add to cart error:", error);
     }
   }
-
-  useEffect(() => {
-    fetch("/api/cart")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Cart data:", data);
-        setCartCount(data.items.length);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
   return (
     <div className="min-h-screen">
       {/* Navbar */}

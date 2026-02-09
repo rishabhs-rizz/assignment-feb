@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const existingItem = await cartItem.findOne({ productId });
 
     if (existingItem) {
-      existingItem.quantity += qty;
+      existingItem.quantity = qty;
       await existingItem.save();
       return NextResponse.json(existingItem);
     }
