@@ -9,23 +9,19 @@ export async function DELETE(
   try {
     await dbConnect();
     const { id } = await params;
-    const deletedItem = await cartItem.findByIdAndDelete(id);
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+    if (!userId) {
+      return NextResponse.json({ error: "userId required" }, { status: 400 });
+    }
+    const deletedItem = await cartItem.findOneAndDelete({ _id: id, userId });
     if (!deletedItem) {
       return NextResponse.json(
-        { error: "Cart item not found" },
+        { error: "Cart item not found or unauthorized" },
         { status: 404 },
       );
     }
-    const items = await cartItem.find();
-    const totalSum = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
-    );
-    return NextResponse.json({
-      message: "Cart item deleted",
-      items,
-      total: totalSum,
-    });
+    return NextResponse.json({ message: "Item removed from cart" });
   } catch (error) {
     console.error("Cart DELETE error:", error);
     return NextResponse.json(

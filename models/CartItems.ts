@@ -6,6 +6,8 @@ const CartItemSchema = new Schema({
     ref: "Product",
     required: true,
   },
+  userId: String,
+
   name: {
     type: String,
     required: true,

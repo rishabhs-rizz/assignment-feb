@@ -6,22 +6,22 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     await dbConnect();
-    const { productId, qty } = await request.json();
-    if (!productId || !qty) {
+    const { productId, qty, userId } = await request.json();
+    if (!productId || !qty || !userId) {
       return NextResponse.json(
-        { error: "productId and qty required" },
+        { error: "productId, qty, and userId required" },
         { status: 400 },
       );
     }
 
-    const product = await Product.findById(productId);
+    const product = await Product.findById({ productId });
 
     if (!product) {
       return new Response("Product not found", { status: 404 });
     }
 
     //if it's already in cart, update qty
-    const existingItem = await cartItem.findOne({ productId });
+    const existingItem = await cartItem.findOne({ productId, userId });
 
     if (existingItem) {
       existingItem.quantity = qty;
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
 
     const newCartItem = await cartItem.create({
       productId: product._id,
+      userId,
       name: product.name,
       price: product.price,
       quantity: qty,
@@ -46,10 +47,12 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await dbConnect();
-    const items = await cartItem.find();
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+    const items = await cartItem.find({ userId });
     const totalSum = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
