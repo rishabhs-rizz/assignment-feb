@@ -14,6 +14,16 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cartCount, setCartCount] = useState(0);
 
+  async function LoadProducts() {
+    await fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }
+
+  useEffect(() => {
+    LoadProducts();
+  }, []);
+
   async function LoadCartCount() {
     await fetch("/api/cart")
       .then((res) => res.json())
@@ -23,18 +33,8 @@ export default function Home() {
       });
   }
 
-  async function LoadProducts() {
-    await fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }
-
   useEffect(() => {
     LoadCartCount();
-  }, []);
-
-  useEffect(() => {
-    LoadProducts();
   }, []);
 
   async function AddtoCart({
