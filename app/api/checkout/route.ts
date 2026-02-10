@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   try {
     await dbConnect();
     const userId = await request.json();
-    const items = await cartItem.find({ userId });
+    const items = await cartItem.find(userId);
 
     if (items.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });

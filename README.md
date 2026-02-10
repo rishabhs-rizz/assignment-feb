@@ -2,6 +2,7 @@ Setup Instructions
 
 1️- Clone repo
 git clone git@github.com:rishabhs-rizz/assignment-feb.git
+cd assignment-feb
 
 2️- Install dependencies
 npm install

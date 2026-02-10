@@ -20,7 +20,7 @@ export async function GET() {
           name: "T-Shirt",
           price: 799,
           image:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsIgc38cZ3s9y-SERo2Qe3UWzfu_S2C4zKRoBAWR6NUUY0dwOy_cE2VSE&s",
+            "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_t.png",
         },
         {
           name: "Backpack",
@@ -39,6 +39,22 @@ export async function GET() {
           price: 399,
           image:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9pQCdAo6EZxBUizP36ZSVFxl0Z3RHWlcXg&s",
+        },
+        {
+          name: "Chain Bracelet",
+          price: 590,
+          image:
+            "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_t.png",
+        },
+        {
+          name: "Backpack",
+          price: 1499,
+          image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png",
+        },
+        {
+          name: "Hard drive",
+          price: 4999,
+          image: "https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_t.png",
         },
       ]);
     }
