@@ -118,11 +118,10 @@ export default function Cart() {
         <div>Loading...</div>
       ) : cartItems.items.length === 0 ? (
         <div className="text-center">
-          <div className="h-12 flex items-center justify-between px-4">
+          <div className="min-h-12 flex flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center justify-between px-4">
             <Link
               href={"/"}
               className="py-2 px-4 bg-blue-400 rounded-md text-center cursor-pointer hover:bg-blue-500 transition-colors duration-200 gap-1 text-white flex items-center"
-              onClick={() => window.history.back()}
             >
               {" "}
               <BiArrowBack className="inline-block mr-1" />
@@ -134,8 +133,8 @@ export default function Cart() {
       ) : (
         <>
           {checkOutBoxVisible && (
-            <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-[92vw] max-w-md relative">
                 <div className="absolute right-4 top-2">
                   <BiX
                     className="cursor-pointer"
@@ -188,7 +187,7 @@ export default function Cart() {
           )}
 
           <div>
-            <div className="h-12 flex items-center justify-between px-4">
+            <div className="min-h-12 flex flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center justify-between px-4">
               <Link
                 href={"/"}
                 className="py-2 px-4 bg-blue-400 rounded-md text-center cursor-pointer hover:bg-blue-500 transition-colors duration-200 gap-1 text-white flex items-center"
@@ -205,7 +204,7 @@ export default function Cart() {
               </button>
             </div>
 
-            <h1 className="text-4xl font-bold text-center bg-linear-to-r from-amber-500 to-orange-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center bg-linear-to-r from-amber-500 to-orange-400 bg-clip-text text-transparent">
               Your Cart
             </h1>
             <h3 className="text-center text-lg mt-2 text-gray-600">
@@ -214,11 +213,18 @@ export default function Cart() {
               Total Price: ${cartItems.total}
             </h3>
           </div>
-          <div className="p-10 grid grid-cols-4 gap-6">
+          <div
+            className="px-4 py-6 sm:px-6 lg:px-10 grid 
+grid-cols-1 
+sm:grid-cols-2 
+lg:grid-cols-3 
+xl:grid-cols-4 
+gap-6"
+          >
             {cartItems.items.map((item) => (
               <div
                 key={item._id}
-                className="border border-gray-300 rounded-lg p-4 bg-gray-100 hover:shadow-lg transition-shadow duration-300"
+                className="border border-gray-300 rounded-lg p-4 bg-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col"
               >
                 <img
                   src={item.image}
@@ -227,7 +233,7 @@ export default function Cart() {
                 />
                 <h2 className="font-bold text-lg mt-2 truncate">{item.name}</h2>
                 <p className="text-sm text-gray-600">Price: ${item.price}</p>
-                <p className="text-sm text-gray-600 flex items-center gap-1">
+                <p className="text-sm text-gray-600 flex flex-wrap items-center gap-2">
                   Quantity: {item.quantity}
                   <BiPlus
                     className="cursor-pointer hover:text-amber-500"
@@ -244,7 +250,7 @@ export default function Cart() {
                 </p>
                 <button
                   onClick={() => removeFromCart(item._id)}
-                  className="w-full bg-linear-to-r from-amber-500 to-orange-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-gray-500/30 hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer mt-4"
+                  className="ml-auto w-full bg-linear-to-r from-amber-500 to-orange-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-gray-500/30 hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer mt-4"
                 >
                   Remove from Cart
                 </button>
